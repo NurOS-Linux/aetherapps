@@ -14,7 +14,7 @@ BLACK = (0, 0, 0)
 YELLOW = (255, 255, 0)
 
 # Загрузка изображений
-background_image = pygame.image.load("background.jpg").convert()
+background_image = pygame.image.load("juldyz/background.jpg").convert()
 ship_image = pygame.image.load("ship.png").convert_alpha()
 star_image = pygame.image.load("star.png").convert_alpha()
 explosion_image = pygame.image.load("explosion.png").convert_alpha()
@@ -35,12 +35,28 @@ star_width, star_height = star_image.get_size()
 star_speed = 3
 stars = []
 
+# Параметры пуль
+bullet_width, bullet_height = 5, 10
+bullet_speed = 7
+bullets = []
+
+# Параметры автоматической стрельбы
+auto_shoot_delay = 30  # Задержка между выстрелами (в кадрах)
+shoot_timer = 0  # Таймер для автоматической стрельбы
+
 # Счёт
 score = 0
 font = pygame.font.Font(None, 36)
 
 # Взрывы
 explosions = []
+
+# Загрузка звуков
+pygame.mixer.music.load("background_music.mp3")  # Фоновая музыка
+pygame.mixer.music.play(-1)  # Воспроизводить музыку в цикле
+
+shoot_sound = pygame.mixer.Sound("shoot.mp3")  # Звук выстрела
+explosion_sound = pygame.mixer.Sound("explosion.mp3")  # Звук взрыва
 
 
 def create_star():
@@ -56,6 +72,11 @@ def draw_ship(x, y):
 def draw_stars():
     for star in stars:
         window.blit(star_image, (star.x, star.y))
+
+
+def draw_bullets():
+    for bullet in bullets:
+        pygame.draw.rect(window, YELLOW, bullet)
 
 
 def draw_explosions():
@@ -87,23 +108,43 @@ while running:
     if keys[pygame.K_RIGHT] and ship_x < WIDTH - ship_width:
         ship_x += ship_speed
 
+    # Автоматическая стрельба
+    shoot_timer += 1
+    if shoot_timer >= auto_shoot_delay:
+        bullet = pygame.Rect(ship_x + ship_width // 2 - bullet_width // 2, ship_y, bullet_width, bullet_height)
+        bullets.append(bullet)
+        shoot_sound.play()  # Воспроизводим звук выстрела
+        shoot_timer = 0  # Сбрасываем таймер
+
     if random.randint(1, 100) < 5:
         create_star()
 
+    # Обновление положения пуль
+    for bullet in bullets[:]:
+        bullet.y -= bullet_speed
+        if bullet.y < 0:  # Удаляем пулю, если она вышла за экран
+            bullets.remove(bullet)
+
+    # Обновление положения звёзд
     for star in stars[:]:
         star.y += star_speed
         if star.y > HEIGHT:
             stars.remove(star)
 
-        if star.colliderect(pygame.Rect(ship_x, ship_y, ship_width, ship_height)):
-            stars.remove(star)
-            score += 1
-            explosions.append([star.x, star.y, 0])  # Добавляем взрыв
+        # Проверка столкновения пуль со звёздами
+        for bullet in bullets[:]:
+            if star.colliderect(bullet):
+                stars.remove(star)
+                bullets.remove(bullet)
+                score += 1
+                explosions.append([star.x, star.y, 0])  # Добавляем взрыв
+                explosion_sound.play()  # Воспроизводим звук взрыва
 
     # Отрисовка
     window.blit(background_image, (0, 0))  # Фон
     draw_ship(ship_x, ship_y)
     draw_stars()
+    draw_bullets()
     draw_explosions()
     draw_score()
 
