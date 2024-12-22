@@ -1,8 +1,10 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QAction, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QMenu
+from datetime import datetime
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QAction, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QMenu, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QPixmap, QPalette, QColor
 from PyQt5.QtCore import Qt
+from PIL import Image
 
 class PhotoViewer(QMainWindow):
     def __init__(self):
@@ -13,6 +15,7 @@ class PhotoViewer(QMainWindow):
         self.setStyleSheet("background-color: #2E3436;")
         self.current_index = -1
         self.image_files = []
+        self.scale_factor = 1.0  # Начальный масштаб изображения
 
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
@@ -21,7 +24,6 @@ class PhotoViewer(QMainWindow):
 
         self.photoPanel = QWidget(self)
         self.photoPanel.setStyleSheet("background-color: #1C1C1C;")
-        self.photoPanel.setFixedSize(400, 300)
 
         self.photoLayout = QHBoxLayout(self.photoPanel)
         self.photoLayout.setContentsMargins(0, 0, 0, 0)
@@ -29,30 +31,54 @@ class PhotoViewer(QMainWindow):
         self.label = QLabel(self.photoPanel)
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setStyleSheet("color: #FFFFFF;")
+        self.label.setScaledContents(True)
         self.photoLayout.addWidget(self.label)
 
         self.mainLayout.addStretch()
-        self.mainLayout.addWidget(self.photoPanel, 0, Qt.AlignCenter)
+
+        self.prevButton = QPushButton('<', self)
+        self.prevButton.clicked.connect(self.showPrevImage)
+        self.prevButton.setStyleSheet("background-color: #1C1C1C; color: #FFFFFF;")
+
+        self.nextButton = QPushButton('>', self)
+        self.nextButton.clicked.connect(self.showNextImage)
+        self.nextButton.setStyleSheet("background-color: #1C1C1C; color: #FFFFFF;")
+
+        self.zoomInButton = QPushButton('Zoom In', self)
+        self.zoomInButton.clicked.connect(self.zoomIn)
+        self.zoomInButton.setStyleSheet("background-color: #1C1C1C; color: #FFFFFF;")
+
+        self.zoomOutButton = QPushButton('Zoom Out', self)
+        self.zoomOutButton.clicked.connect(self.zoomOut)
+        self.zoomOutButton.setStyleSheet("background-color: #1C1C1C; color: #FFFFFF;")
+
+        self.photoPanelContainer = QHBoxLayout()
+        self.photoPanelContainer.addWidget(self.createButtonWithSpacer(self.prevButton), 0, Qt.AlignVCenter)
+        self.photoPanelContainer.addWidget(self.photoPanel, 1, Qt.AlignCenter)
+        self.photoPanelContainer.addWidget(self.createButtonWithSpacer(self.nextButton), 0, Qt.AlignVCenter)
+        self.mainLayout.addLayout(self.photoPanelContainer)
+
         self.mainLayout.addStretch()
+
+        self.zoomLayout = QHBoxLayout()
+        self.zoomLayout.addWidget(self.zoomInButton)
+        self.zoomLayout.addWidget(self.zoomOutButton)
+        self.mainLayout.addLayout(self.zoomLayout)
 
         self.infoLabel = QLabel(self)
         self.infoLabel.setStyleSheet("color: #FFFFFF;")
         self.mainLayout.addWidget(self.infoLabel, 0, Qt.AlignCenter)
 
-        self.buttonLayout = QHBoxLayout()
-        self.mainLayout.addLayout(self.buttonLayout)
-
-        self.prevButton = QPushButton('<', self)
-        self.prevButton.clicked.connect(self.showPrevImage)
-        self.prevButton.setStyleSheet("background-color: #1C1C1C; color: #FFFFFF;")
-        self.buttonLayout.addWidget(self.prevButton)
-
-        self.nextButton = QPushButton('>', self)
-        self.nextButton.clicked.connect(self.showNextImage)
-        self.nextButton.setStyleSheet("background-color: #1C1C1C; color: #FFFFFF;")
-        self.buttonLayout.addWidget(self.nextButton)
-
         self.createMenu()
+
+    def createButtonWithSpacer(self, button):
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        layout.addWidget(button, 0, Qt.AlignCenter)
+        layout.addSpacerItem(QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        return container
 
     def createMenu(self):
         menubar = self.menuBar()
@@ -81,19 +107,36 @@ class PhotoViewer(QMainWindow):
             self.showImage(fileName)
 
     def showImage(self, fileName):
-        pixmap = QPixmap(fileName)
-        self.label.setPixmap(pixmap)
-        self.label.setScaledContents(True)
-        self.updateImageInfo(pixmap)
+        self.pixmap = QPixmap(fileName)
+        self.label.setPixmap(self.pixmap.scaled(self.pixmap.size() * self.scale_factor, Qt.KeepAspectRatio))
+        self.updateImageInfo(fileName, self.pixmap)
 
-    def updateImageInfo(self, pixmap):
+    def zoomIn(self):
+        self.scale_factor *= 1.2
+        self.label.setPixmap(self.pixmap.scaled(self.pixmap.size() * self.scale_factor, Qt.KeepAspectRatio))
+
+    def zoomOut(self):
+        self.scale_factor /= 1.2
+        self.label.setPixmap(self.pixmap.scaled(self.pixmap.size() * self.scale_factor, Qt.KeepAspectRatio))
+
+    def updateImageInfo(self, fileName, pixmap):
         imageSize = pixmap.size()
         fileWidth = imageSize.width()
         fileHeight = imageSize.height()
         aspectRatio = fileWidth / fileHeight
 
+        img = Image.open(fileName)
+        bitDepth = img.mode
+        fileSize = os.path.getsize(fileName)
+        fileModifiedTime = datetime.fromtimestamp(os.path.getmtime(fileName)).strftime('%Y-%m-%d %H:%M:%S')
+        dpi = img.info.get('dpi', (72, 72))  # По умолчанию 72 dpi если информация недоступна
+
         infoText = f"Размер изображения: {fileWidth}x{fileHeight} пикселей\n"
-        infoText += f"Соотношение сторон: {aspectRatio:.2f}"
+        infoText += f"Соотношение сторон: {aspectRatio:.2f}\n"
+        infoText += f"Битность изображения: {bitDepth}\n"
+        infoText += f"Последняя дата изменения: {fileModifiedTime}\n"
+        infoText += f"Размер файла: {fileSize} байт\n"
+        infoText += f"Количество точек на дюйм: {dpi[0]}"
 
         self.infoLabel.setText(infoText)
 
