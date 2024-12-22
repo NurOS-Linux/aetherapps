@@ -1,0 +1,21 @@
+mediaplayer/
+│
+├── src/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── player.py
+│   ├── playlist.py
+│   ├── ui/
+│   │   ├── __init__.py
+│   │   ├── main_window.py
+│   │   ├── player_controls.py
+│   │   └── style.py
+│   └── utils/
+│       ├── __init__.py
+│       └── audio.py
+│
+├── resources/
+│   ├── icons/
+│   └── style/
+│
+└── requirements.txt
