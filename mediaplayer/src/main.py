@@ -9,20 +9,14 @@ License: GPL 3.0
 """
 
 import sys
-import logging
 from pathlib import Path
-from datetime import datetime
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QPushButton, QLabel, QSlider, QListWidget, QFileDialog,
-    QStyle, QFrame
+    QPushButton, QLabel, QSlider, QListWidget
 )
-from PyQt6.QtCore import Qt, QTimer, QUrl, QSize, QPoint
+from PyQt6.QtCore import Qt
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
-from PyQt6.QtGui import (
-    QIcon, QDragEnterEvent, QDropEvent, QPalette, QColor,
-    QLinearGradient, QGradient
-)
+
 
 class DeltaNightTheme:
     """DeltaDesign Concept Night цветовая схема"""
@@ -37,6 +31,7 @@ class DeltaNightTheme:
     TEXT_PRIMARY = "#FFFFFF"
     TEXT_SECONDARY = "#B3B3B3"
 
+
 class MediaPlayer(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -44,7 +39,7 @@ class MediaPlayer(QMainWindow):
         self.initUI()
         self.initPlayer()
         self.setupConnections()
-        
+
     def initUI(self):
         """Инициализация пользовательского интерфейса"""
         self.setWindowTitle("NurOS Media Player")
@@ -95,7 +90,6 @@ class MediaPlayer(QMainWindow):
             }}
         """)
 
-        # Центральный виджет
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
@@ -120,14 +114,11 @@ class MediaPlayer(QMainWindow):
 
         # Контролы воспроизведения
         controls = QHBoxLayout()
-        
         self.prev_button = QPushButton("⏮")
         self.play_button = QPushButton("▶")
         self.next_button = QPushButton("⏭")
         self.stop_button = QPushButton("⏹")
-        
-        for button in (self.prev_button, self.play_button, 
-                      self.next_button, self.stop_button):
+        for button in (self.prev_button, self.play_button, self.next_button, self.stop_button):
             button.setFixedSize(40, 40)
             controls.addWidget(button)
 
@@ -136,11 +127,9 @@ class MediaPlayer(QMainWindow):
         self.volume_slider.setMaximum(100)
         self.volume_slider.setValue(70)
         self.volume_slider.setFixedWidth(100)
-        
         controls.addStretch()
         controls.addWidget(QLabel("🔊"))
         controls.addWidget(self.volume_slider)
-        
         layout.addLayout(controls)
 
         # Плейлист
@@ -153,7 +142,6 @@ class MediaPlayer(QMainWindow):
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
         self.audio_output.setVolume(0.7)
-        
         self.current_file = None
         self.is_playing = False
 
@@ -163,18 +151,10 @@ class MediaPlayer(QMainWindow):
         self.stop_button.clicked.connect(self.stopPlayback)
         self.prev_button.clicked.connect(self.previousTrack)
         self.next_button.clicked.connect(self.nextTrack)
-        
-        self.volume_slider.valueChanged.connect(
-            lambda x: self.audio_output.setVolume(x / 100)
-        )
-        
-        self.progress_slider.sliderMoved.connect(
-            lambda x: self.player.setPosition(x)
-        )
-        
+        self.volume_slider.valueChanged.connect(lambda x: self.audio_output.setVolume(x / 100))
+        self.progress_slider.sliderMoved.connect(lambda x: self.player.setPosition(x))
         self.player.positionChanged.connect(self.updatePosition)
         self.player.durationChanged.connect(self.updateDuration)
-        
         self.playlist.itemDoubleClicked.connect(self.playSelected)
 
     def togglePlayback(self):
@@ -192,6 +172,29 @@ class MediaPlayer(QMainWindow):
         self.player.stop()
         self.play_button.setText("▶")
         self.is_playing = False
+
+    def previousTrack(self):
+        """Переход к предыдущему треку в плейлисте"""
+        current_row = self.playlist.currentRow()
+        if current_row > 0:
+            self.playlist.setCurrentRow(current_row - 1)
+            self.playSelected()
+
+    def nextTrack(self):
+        """Переход к следующему треку в плейлисте"""
+        current_row = self.playlist.currentRow()
+        if current_row < self.playlist.count() - 1:
+            self.playlist.setCurrentRow(current_row + 1)
+            self.playSelected()
+
+    def playSelected(self):
+        """Воспроизведение выбранного трека"""
+        current_item = self.playlist.currentItem()
+        if current_item:
+            self.current_file = current_item.text()
+            self.track_info.setText(f"Воспроизведение: {self.current_file}")
+            self.player.setSource(QUrl.fromLocalFile(self.current_file))
+            self.togglePlayback()
 
     def updatePosition(self, position):
         """Обновление позиции воспроизведения"""
@@ -211,12 +214,12 @@ class MediaPlayer(QMainWindow):
         s = s % 60
         return f"{m:02d}:{s:02d}"
 
-    def dragEnterEvent(self, event: QDragEnterEvent):
+    def dragEnterEvent(self, event):
         """Обработка начала перетаскивания файлов"""
         if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
-    def dropEvent(self, event: QDropEvent):
+    def dropEvent(self, event):
         """Обработка броска файлов"""
         urls = event.mimeData().urls()
         for url in urls:
@@ -224,11 +227,13 @@ class MediaPlayer(QMainWindow):
             if file_path.lower().endswith(('.mp3', '.wav', '.ogg', '.flac')):
                 self.playlist.addItem(Path(file_path).name)
 
+
 def main():
     app = QApplication(sys.argv)
     player = MediaPlayer()
     player.show()
     sys.exit(app.exec())
+
 
 if __name__ == "__main__":
     main()
