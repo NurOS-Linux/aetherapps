@@ -11,10 +11,13 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Крестики-Нолики с ИИ")
 
 # Цвета
-WHITE = (255, 255, 255)
+WHITE = (30, 30, 30)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+LINE_COLOR = (200, 200, 200)
+X_COLOR = (255, 69, 0)  # Изменен цвет X на ярко-красный
+O_COLOR = (0, 191, 255)  # Изменен цвет O на ярко-голубой
 
 # Настройки игры
 BOARD_SIZE = 3
@@ -29,18 +32,18 @@ MENU_FONT = pygame.font.Font(None, 50)
 
 # Функция для отрисовки доски
 def draw_board():
-    screen.fill(WHITE)
+    screen.fill(BLACK)
     for row in range(1, BOARD_SIZE):
-        pygame.draw.line(screen, BLACK, (0, row * CELL_SIZE), (WIDTH, row * CELL_SIZE), 2)
-        pygame.draw.line(screen, BLACK, (row * CELL_SIZE, 0), (row * CELL_SIZE, HEIGHT), 2)
+        pygame.draw.line(screen, LINE_COLOR, (0, row * CELL_SIZE), (WIDTH, row * CELL_SIZE), 2)
+        pygame.draw.line(screen, LINE_COLOR, (row * CELL_SIZE, 0), (row * CELL_SIZE, HEIGHT), 2)
 
     for row in range(BOARD_SIZE):
         for col in range(BOARD_SIZE):
             if board[row][col] == 'X':
-                text = FONT.render("X", True, RED)
+                text = FONT.render("X", True, X_COLOR)
                 screen.blit(text, (col * CELL_SIZE + CELL_SIZE // 4, row * CELL_SIZE + CELL_SIZE // 4))
             elif board[row][col] == 'O':
-                text = FONT.render("O", True, BLUE)
+                text = FONT.render("O", True, O_COLOR)
                 screen.blit(text, (col * CELL_SIZE + CELL_SIZE // 4, row * CELL_SIZE + CELL_SIZE // 4))
 
 # Функция для проверки победы
@@ -161,10 +164,10 @@ def minimax(board, depth, is_maximizing):
 
 # Функция для отрисовки меню
 def draw_menu():
-    screen.fill(WHITE)
-    text_easy = MENU_FONT.render("Лёгкий", True, BLACK)
-    text_medium = MENU_FONT.render("Средний", True, BLACK)
-    text_hard = MENU_FONT.render("Сложный", True, BLACK)
+    screen.fill(BLACK)
+    text_easy = MENU_FONT.render("Лёгкий", True, LINE_COLOR)
+    text_medium = MENU_FONT.render("Средний", True, LINE_COLOR)
+    text_hard = MENU_FONT.render("Сложный", True, LINE_COLOR)
 
     # Кнопки для выбора сложности
     button_easy = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 100, 200, 50)
