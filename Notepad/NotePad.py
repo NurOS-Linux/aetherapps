@@ -4,9 +4,18 @@ from PyQt6.QtWidgets import (
     QPushButton, QToolBar, QStatusBar, QMessageBox, QFontDialog, QColorDialog,
     QMenu, QMenuBar
 )
-from PyQt6.QtGui import QAction, QIcon, QTextCharFormat, QSyntaxHighlighter, QTextCursor, QFont, QPalette
+from PyQt6.QtGui import QAction, QIcon, QTextCharFormat, QSyntaxHighlighter, QTextCursor, QFont, QPalette, QColor
 from PyQt6.QtCore import Qt, QRegularExpression
 
+# Define Delta Design Night Theme colors
+PRIMARY_DARK = '#121212'
+SECONDARY_DARK = '#1E1E1E'
+NIGHT_BLUE = '#2D5B9E'
+NIGHT_PURPLE = '#6B4BA3'
+NIGHT_TEAL = '#1C746C'
+SURFACE_LIGHT = '#3A3A3A'
+SURFACE_MID = '#2C2C2C'
+SURFACE_DARK = '#1A1A1A'
 
 class SyntaxHighlighter(QSyntaxHighlighter):
     def __init__(self, parent=None):
@@ -47,8 +56,30 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 m = match.next()
                 self.setFormat(m.capturedStart(), m.capturedLength(), fmt)
 
-
 class NotePad(QMainWindow):
+
+    def set_delta_design_night_theme(self):
+        palette = QPalette()
+        palette.setColor(QPalette.ColorRole.Window, QColor(PRIMARY_DARK))
+        palette.setColor(QPalette.ColorRole.WindowText, QColor(NIGHT_TEAL))
+        palette.setColor(QPalette.ColorRole.Base, QColor(SECONDARY_DARK))
+        palette.setColor(QPalette.ColorRole.Text, QColor(NIGHT_PURPLE))
+        palette.setColor(QPalette.ColorRole.Button, QColor(SURFACE_LIGHT))
+        palette.setColor(QPalette.ColorRole.ButtonText, QColor(NIGHT_BLUE))
+        palette.setColor(QPalette.ColorRole.Highlight, QColor(NIGHT_BLUE))
+        palette.setColor(QPalette.ColorRole.HighlightedText, QColor(SURFACE_LIGHT))
+
+        self.setPalette(palette)
+        self.setStyleSheet(f"""
+            QToolBar {{ background-color: {SURFACE_MID}; border: none; }}
+            QToolButton {{ background-color: {SURFACE_LIGHT}; border: none; }}
+            QToolButton:hover {{ background-color: {SURFACE_DARK}; }}
+            QMenuBar {{ background-color: {PRIMARY_DARK}; color: {NIGHT_TEAL}; }}
+            QMenu {{ background-color: {SECONDARY_DARK}; color: {NIGHT_TEAL}; }}
+            QMenu::item:selected {{ background-color: {NIGHT_BLUE}; }}
+            QTextEdit {{ background-color: {SECONDARY_DARK}; color: {NIGHT_PURPLE}; }}
+        """)
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("NotePad на PyQt6 с расширенной кастомизацией")
@@ -72,6 +103,9 @@ class NotePad(QMainWindow):
 
         # Инициализируем текущий файл
         self.current_file = None
+
+        # Применяем Delta Design Night Theme
+        self.set_delta_design_night_theme()
 
     def create_toolbar(self):
         toolbar = QToolBar("Панель инструментов")
@@ -116,6 +150,7 @@ class NotePad(QMainWindow):
     def create_status_bar(self):
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
+        self.status_bar.setStyleSheet(f"background-color: {SURFACE_MID}; color: {NIGHT_TEAL};")
         self.status_bar.showMessage("Готово", 5000)
 
     def create_menu(self):
@@ -139,7 +174,6 @@ class NotePad(QMainWindow):
         view_menu.addAction("Зелёная тема", self.set_green_theme)
 
     def open_file(self):
-        # Открываем диалог для выбора файла
         file_path, _ = QFileDialog.getOpenFileName(self, "Открыть файл", "", "Текстовые файлы (*.txt);;Все файлы (*)")
         if file_path:
             try:
