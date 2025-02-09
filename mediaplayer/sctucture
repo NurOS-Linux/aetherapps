@@ -1,6 +1,6 @@
 mediaplayer/
 │
-├── src/
+├── /
 │   ├── __init__.py
 │   ├── main.py
 │   ├── player.py
