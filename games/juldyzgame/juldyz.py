@@ -15,9 +15,9 @@ YELLOW = (255, 255, 0)
 
 # Загрузка изображений
 background_image = pygame.image.load("juldyz/background.jpg").convert()
-ship_image = pygame.image.load("ship.png").convert_alpha()
-star_image = pygame.image.load("star.png").convert_alpha()
-explosion_image = pygame.image.load("explosion.png").convert_alpha()
+ship_image = pygame.image.load("juldyz/ship.png").convert_alpha()
+star_image = pygame.image.load("juldyz/star.png").convert_alpha()
+explosion_image = pygame.image.load("juldyz/explosion.png").convert_alpha()
 
 # Масштабирование изображений
 ship_image = pygame.transform.scale(ship_image, (40, 60))
@@ -52,11 +52,11 @@ font = pygame.font.Font(None, 36)
 explosions = []
 
 # Загрузка звуков
-pygame.mixer.music.load("background_music.mp3")  # Фоновая музыка
+pygame.mixer.music.load("juldyz/background_music.mp3")  # Фоновая музыка
 pygame.mixer.music.play(-1)  # Воспроизводить музыку в цикле
 
-shoot_sound = pygame.mixer.Sound("shoot.mp3")  # Звук выстрела
-explosion_sound = pygame.mixer.Sound("explosion.mp3")  # Звук взрыва
+shoot_sound = pygame.mixer.Sound("juldyz/shoot.mp3")  # Звук выстрела
+explosion_sound = pygame.mixer.Sound("juldyz/explosion.mp3")  # Звук взрыва
 
 
 def create_star():
