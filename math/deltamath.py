@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPalette, QFontDatabase
 
-class ModernCalculator(QMainWindow):
+class NurOSCalculator(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Calculator")
@@ -292,7 +292,7 @@ def main():
     palette.setColor(QPalette.ColorRole.Link, QColor(92, 144, 255))
     app.setPalette(palette)
     
-    calculator = ModernCalculator()
+    calculator = NurOSCalculator()
     calculator.show()
     sys.exit(app.exec())
 

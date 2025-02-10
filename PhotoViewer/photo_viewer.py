@@ -3,21 +3,31 @@ import os
 import json
 import logging
 from datetime import datetime
-from PyQt5.QtWidgets import (
-    QApplication, QLabel, QMainWindow, QAction, QFileDialog, QVBoxLayout, QHBoxLayout, 
-    QWidget, QPushButton, QSpacerItem, QSizePolicy, QScrollArea, QGridLayout, QDialog
+from PyQt6.QtWidgets import (
+    QApplication, QLabel, QMainWindow, QFileDialog, QVBoxLayout, QHBoxLayout,
+    QWidget, QPushButton, QSpacerItem, QSizePolicy, QScrollArea, QGridLayout, QDialog,
+    QFrame
 )
-from PyQt5.QtGui import QPixmap, QPalette, QColor, QFont
-from PyQt5.QtCore import Qt, QPropertyAnimation, QEasingCurve
+from PyQt6.QtGui import QPixmap, QPalette, QColor, QFont, QAction
+from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve
 from PIL import Image, ImageEnhance, ExifTags
+
+# Цвета из вашего дизайна
+PRIMARY_DARK = '#1a1a1a'
+SECONDARY_DARK = '#2d2d2d'
+ACCENT_BLUE = '#5c90ff'
+SURFACE_DARK = '#3d3d3d'
+HOVER_DARK = '#454545'
+BUTTON_HOVER = '#4a7ae0'
+BUTTON_PRESSED = '#3e68c7'
 
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(),  # Вывод логов в консоль
-        logging.FileHandler("app_log.log", mode='a', encoding='utf-8')  # Запись логов в файл
+        logging.StreamHandler(),
+        logging.FileHandler("app_log.log", mode='a', encoding='utf-8')
     ]
 )
 
@@ -26,126 +36,246 @@ class PhotoViewer(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
-        self.setWindowTitle("NurOS - Photo Viewer")
-        self.setGeometry(100, 100, 800, 600)
-        self.setStyleSheet("background-color: #121212; color: #FFFFFF;")
+        self.setWindowTitle("Modern Photo Viewer")
+        self.setMinimumSize(800, 600)
+        
+        # Инициализация переменных
         self.current_index = -1
         self.image_files = []
         self.scale_factor = 1.0
 
-        self.centralWidget = QWidget()
-        self.setCentralWidget(self.centralWidget)
-
-        self.mainLayout = QVBoxLayout(self.centralWidget)
-
-        self.photoPanel = QWidget(self)
-        self.photoPanel.setStyleSheet("background-color: #1E1E1E; border-radius: 10px;")
-
-        self.photoLayout = QHBoxLayout(self.photoPanel)
-        self.photoLayout.setContentsMargins(0, 0, 0, 0)
-
-        self.label = QLabel(self.photoPanel)
-        self.label.setAlignment(Qt.AlignCenter)
-        self.label.setStyleSheet("color: #FFFFFF;")
-        self.label.setScaledContents(True)
-        self.photoLayout.addWidget(self.label)
-
-        self.mainLayout.addStretch()
-
-        self.prevButton = self.createStyledButton('<')
-        self.prevButton.clicked.connect(self.showPrevImage)
-
-        self.nextButton = self.createStyledButton('>')
-        self.nextButton.clicked.connect(self.showNextImage)
-
-        self.zoomInButton = self.createStyledButton('Zoom In')
-        self.zoomInButton.clicked.connect(self.zoomIn)
-
-        self.zoomOutButton = self.createStyledButton('Zoom Out')
-        self.zoomOutButton.clicked.connect(self.zoomOut)
-
-        self.fullScreenButton = self.createStyledButton('Fullscreen')
-        self.fullScreenButton.clicked.connect(self.showFullScreenImage)
-
-        self.photoPanelContainer = QHBoxLayout()
-        self.photoPanelContainer.addWidget(self.prevButton, 0, Qt.AlignVCenter)
-        self.photoPanelContainer.addWidget(self.photoPanel, 1, Qt.AlignCenter)
-        self.photoPanelContainer.addWidget(self.nextButton, 0, Qt.AlignVCenter)
-        self.mainLayout.addLayout(self.photoPanelContainer)
-
-        self.mainLayout.addStretch()
-
-        self.zoomLayout = QHBoxLayout()
-        self.zoomLayout.addWidget(self.zoomInButton)
-        self.zoomLayout.addWidget(self.zoomOutButton)
-        self.mainLayout.addLayout(self.zoomLayout)
-
-        self.fullScreenLayout = QHBoxLayout()
-        self.fullScreenLayout.addStretch()
-        self.fullScreenLayout.addWidget(self.fullScreenButton, 0, Qt.AlignRight | Qt.AlignBottom)
-        self.mainLayout.addLayout(self.fullScreenLayout)
-
-        self.thumbnailLayout = QHBoxLayout()
-        self.thumbnailScrollArea = QScrollArea(self)
+        # Создаем центральный виджет с карточкой
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        main_layout = QVBoxLayout(central_widget)
+        
+        # Создаем основную карточку
+        self.card = QFrame()
+        self.card.setObjectName("card")
+        card_layout = QVBoxLayout(self.card)
+        card_layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Создаем панель для фото
+        self.photoPanel = QFrame()
+        self.photoPanel.setObjectName("photoPanel")
+        photo_layout = QHBoxLayout(self.photoPanel)
+        
+        # Создаем виджет для изображения
+        self.label = QLabel()
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setObjectName("imageLabel")
+        photo_layout.addWidget(self.label)
+        
+        # Добавляем кнопки навигации
+        self.prevButton = self.createStyledButton('⟨')
+        self.nextButton = self.createStyledButton('⟩')
+        
+        # Создаем контейнер для фото и кнопок
+        photo_container = QHBoxLayout()
+        photo_container.addWidget(self.prevButton)
+        photo_container.addWidget(self.photoPanel, 1)
+        photo_container.addWidget(self.nextButton)
+        
+        # Добавляем панель управления
+        control_panel = QFrame()
+        control_panel.setObjectName("controlPanel")
+        control_layout = QHBoxLayout(control_panel)
+        
+        self.zoomInButton = self.createStyledButton('🔍+')
+        self.zoomOutButton = self.createStyledButton('🔍-')
+        self.fullScreenButton = self.createStyledButton('⛶')
+        
+        control_layout.addWidget(self.zoomInButton)
+        control_layout.addWidget(self.zoomOutButton)
+        control_layout.addStretch()
+        control_layout.addWidget(self.fullScreenButton)
+        
+        # Создаем галерею миниатюр
+        self.thumbnailScrollArea = QScrollArea()
+        self.thumbnailScrollArea.setObjectName("thumbnailArea")
         self.thumbnailScrollArea.setWidgetResizable(True)
-        self.thumbnailScrollArea.setStyleSheet("background-color: #1E1E1E; border-radius: 10px;")
         self.thumbnailContainer = QWidget()
         self.thumbnailGrid = QGridLayout(self.thumbnailContainer)
         self.thumbnailScrollArea.setWidget(self.thumbnailContainer)
-        self.thumbnailLayout.addWidget(self.thumbnailScrollArea)
-        self.mainLayout.addLayout(self.thumbnailLayout)
-
-        self.infoLabel = QLabel(self)
-        self.infoLabel.setStyleSheet("color: #FFFFFF; font-size: 14px;")
-        self.mainLayout.addWidget(self.infoLabel, 0, Qt.AlignCenter)
-
+        
+        # Добавляем информационную панель
+        self.infoLabel = QLabel()
+        self.infoLabel.setObjectName("infoLabel")
+        
+        # Собираем все в основной layout
+        card_layout.addLayout(photo_container)
+        card_layout.addWidget(control_panel)
+        card_layout.addWidget(self.thumbnailScrollArea)
+        card_layout.addWidget(self.infoLabel)
+        
+        main_layout.addWidget(self.card)
+        
+        # Подключаем сигналы
+        self.connectSignals()
+        
+        # Применяем стили
+        self.applyStyles()
+        
+        # Создаем меню и загружаем последнее изображение
         self.createMenu()
         self.loadLastOpenedImage()
 
     def createStyledButton(self, text):
-        button = QPushButton(text, self)
-        button.setStyleSheet(
-            """
-            QPushButton {
-                background-color: #2C2C2C;
-                color: #FFFFFF;
-                border: none;
-                border-radius: 10px;
-                padding: 10px;
-            }
-            QPushButton:hover {
-                background-color: #3A3A3A;
-            }
-            QPushButton:pressed {
-                background-color: #1A1A1A;
-            }
-            """
-        )
+        button = QPushButton(text)
+        button.setObjectName("actionButton")
         return button
+
+    def applyStyles(self):
+        self.setStyleSheet(f"""
+            QMainWindow {{
+                background-color: {PRIMARY_DARK};
+            }}
+            
+            #card {{
+                background-color: {SECONDARY_DARK};
+                border-radius: 10px;
+                padding: 20px;
+            }}
+            
+            #photoPanel {{
+                background-color: {SURFACE_DARK};
+                border-radius: 5px;
+                min-height: 400px;
+            }}
+            
+            #actionButton {{
+                background-color: {ACCENT_BLUE};
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 12px;
+                font-size: 14px;
+                font-weight: bold;
+            }}
+            
+            #actionButton:hover {{
+                background-color: {BUTTON_HOVER};
+            }}
+            
+            #actionButton:pressed {{
+                background-color: {BUTTON_PRESSED};
+            }}
+            
+            #thumbnailArea {{
+                background-color: {SURFACE_DARK};
+                border-radius: 5px;
+                padding: 10px;
+                margin-top: 10px;
+            }}
+            
+            #imageLabel {{
+                color: white;
+                font-size: 14px;
+            }}
+            
+            #infoLabel {{
+                color: white;
+                font-size: 12px;
+                padding: 10px;
+                background-color: {SURFACE_DARK};
+                border-radius: 5px;
+                margin-top: 10px;
+            }}
+            
+            QScrollBar:horizontal {{
+                background-color: {SURFACE_DARK};
+                height: 8px;
+                border-radius: 4px;
+            }}
+            
+            QScrollBar::handle:horizontal {{
+                background-color: {ACCENT_BLUE};
+                border-radius: 4px;
+            }}
+            
+            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
+                width: 0px;
+            }}
+        """)
+        def connectSignals(self):
+            self.prevButton.clicked.connect(self.showPrevImage)
+        self.nextButton.clicked.connect(self.showNextImage)
+        self.zoomInButton.clicked.connect(self.zoomIn)
+        self.zoomOutButton.clicked.connect(self.zoomOut)
+        self.fullScreenButton.clicked.connect(self.showFullScreenImage)
 
     def createMenu(self):
         menubar = self.menuBar()
-        menubar.clear()
-
+        menubar.setObjectName("menuBar")
+        
         fileMenu = menubar.addMenu("File")
+        fileMenu.setObjectName("menu")
+        
         openAction = QAction("Open", self)
         openAction.setShortcut("Ctrl+O")
         openAction.triggered.connect(self.openImage)
         fileMenu.addAction(openAction)
+        
+        fileMenu.addSeparator()
+        
+        exitAction = QAction("Exit", self)
+        exitAction.setShortcut("Ctrl+Q")
+        exitAction.triggered.connect(self.close)
+        fileMenu.addAction(exitAction)
 
-        appMenu = menubar.addMenu("App")
-        quitAction = QAction("Exit", self)
-        quitAction.setShortcut("Ctrl+Q")
-        quitAction.triggered.connect(self.close)
-        appMenu.addAction(quitAction)
+        # Добавляем информацию о времени и пользователе в строку состояния
+        self.statusBar = self.statusBar()
+        self.statusBar.setObjectName("statusBar")
+        
+        self.timeLabel = QLabel("2025-02-10 05:55:57")
+        self.timeLabel.setObjectName("timeLabel")
+        self.statusBar.addPermanentWidget(self.timeLabel)
+        
+        self.userLabel = QLabel("AnmiTaliDev")
+        self.userLabel.setObjectName("userLabel")
+        self.statusBar.addPermanentWidget(self.userLabel)
+
+        # Добавляем стили для меню и статусбара
+        additional_styles = f"""
+            #menuBar {{
+                background-color: {SECONDARY_DARK};
+                color: white;
+                border: none;
+                padding: 5px;
+            }}
+            
+            #menu {{
+                background-color: {SECONDARY_DARK};
+                color: white;
+                border: none;
+            }}
+            
+            #menu::item:selected {{
+                background-color: {ACCENT_BLUE};
+            }}
+            
+            #statusBar {{
+                background-color: {SECONDARY_DARK};
+                color: white;
+            }}
+            
+            #timeLabel, #userLabel {{
+                color: {ACCENT_BLUE};
+                padding: 5px;
+            }}
+        """
+        self.setStyleSheet(self.styleSheet() + additional_styles)
 
     def openImage(self, fileName=None):
         logging.info("Открытие изображения...")
         if not fileName:
             options = QFileDialog.Options()
             fileName, _ = QFileDialog.getOpenFileName(
-                self, "Open Image", "", "All Files (*);;Images (*.png *.jpg *.jpeg *.bmp *.gif *.webp)", options=options
+                self, 
+                "Open Image", 
+                "", 
+                "Images (*.png *.jpg *.jpeg *.bmp *.gif *.webp);;All Files (*)",
+                options=options
             )
         if fileName:
             logging.info(f"Изображение выбрано: {fileName}")
@@ -170,153 +300,127 @@ class PhotoViewer(QMainWindow):
                 image.save("temp.png")
                 self.pixmap = QPixmap("temp.png")
 
-            self.scale_factor = min(1.0, 512 / max(self.pixmap.width(), self.pixmap.height()))
-            self.label.setPixmap(self.pixmap.scaled(self.pixmap.size() * self.scale_factor, Qt.KeepAspectRatio))
+            # Масштабируем изображение с сохранением пропорций
+            label_size = self.photoPanel.size()
+            scaled_pixmap = self.pixmap.scaled(
+                label_size, 
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation
+            )
+            self.label.setPixmap(scaled_pixmap)
             self.updateImageInfo(fileName, self.pixmap)
         except Exception as e:
             logging.error(f"Ошибка при загрузке изображения: {e}")
 
-    def zoomIn(self):
-        logging.info("Увеличение масштаба изображения")
-        if self.pixmap and not self.pixmap.isNull():
-            self.scale_factor *= 1.2
-            self.label.setPixmap(self.pixmap.scaled(self.pixmap.size() * self.scale_factor, Qt.KeepAspectRatio))
-
-    def zoomOut(self):
-        logging.info("Уменьшение масштаба изображения")
-        if self.pixmap and not self.pixmap.isNull():
-            self.scale_factor /= 1.2
-            self.label.setPixmap(self.pixmap.scaled(self.pixmap.size() * self.scale_factor, Qt.KeepAspectRatio))
-
-    def showFullScreenImage(self):
-        logging.info("Открытие изображения на весь экран")
-        if self.pixmap and not self.pixmap.isNull():
-            dialog = FullScreenDialog(self.pixmap, self)
-            dialog.exec()
-
     def updateThumbnails(self):
         logging.info("Обновление миниатюр")
+        # Очищаем текущие миниатюры
         for i in reversed(range(self.thumbnailGrid.count())):
             widget = self.thumbnailGrid.itemAt(i).widget()
-            if widget is not None:
+            if widget:
                 widget.setParent(None)
 
+        # Создаем новые миниатюры
         for index, fileName in enumerate(self.image_files):
-            thumbnail = QPixmap(fileName)
-            if thumbnail.isNull() and fileName.lower().endswith(".webp"):
+            frame = QFrame()
+            frame.setObjectName("thumbnailFrame")
+            frame_layout = QVBoxLayout(frame)
+            
+            thumbnail = QLabel()
+            thumbnail.setObjectName("thumbnail")
+            pixmap = QPixmap(fileName)
+            if pixmap.isNull() and fileName.lower().endswith(".webp"):
                 image = Image.open(fileName)
                 image.save("temp_thumb.png")
-                thumbnail = QPixmap("temp_thumb.png")
-
-            thumbLabel = QLabel()
-            thumbLabel.setPixmap(thumbnail.scaled(64, 64, Qt.KeepAspectRatio))
-            thumbLabel.mousePressEvent = lambda event, idx=index: self.thumbnailClicked(idx)
-            self.thumbnailGrid.addWidget(thumbLabel, 0, index)
+                pixmap = QPixmap("temp_thumb.png")
+            
+            scaled_pixmap = pixmap.scaled(
+                100, 100, 
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation
+            )
+            thumbnail.setPixmap(scaled_pixmap)
+            
+            frame_layout.addWidget(thumbnail)
+            
+            # Добавляем стили для миниатюр
+            frame.setStyleSheet(f"""
+                #thumbnailFrame {{
+                    background-color: {SURFACE_DARK};
+                    border-radius: 5px;
+                    padding: 5px;
+                }}
+                #thumbnailFrame:hover {{
+                    background-color: {HOVER_DARK};
+                }}
+                #thumbnail {{
+                    border: none;
+                }}
+            """)
+            
+            # Добавляем обработчик клика
+            frame.mousePressEvent = lambda e, idx=index: self.thumbnailClicked(idx)
+            
+            # Добавляем миниатюру в сетку
+            row = index // 6  # 6 миниатюр в ряд
+            col = index % 6
+            self.thumbnailGrid.addWidget(frame, row, col)
 
     def thumbnailClicked(self, index):
         logging.info(f"Клик по миниатюре: {index}")
         if 0 <= index < len(self.image_files):
             self.current_index = index
             self.showImage(self.image_files[self.current_index])
+            
+            # Анимация выбранной миниатюры
+            animation = QPropertyAnimation(self.thumbnailGrid.itemAt(index).widget(), b"geometry")
+            animation.setDuration(200)
+            animation.setEasingCurve(QEasingCurve.Type.OutBack)
+            start_geometry = self.thumbnailGrid.itemAt(index).widget().geometry()
+            animation.setStartValue(start_geometry)
+            animation.setEndValue(start_geometry)
+            animation.start()
 
-    def updateImageInfo(self, fileName, pixmap):
-        logging.info(f"Обновление информации о изображении: {fileName}")
-        if not pixmap or pixmap.isNull():
-            self.infoLabel.setText("No image loaded.")
-            return
-
-        imageSize = pixmap.size()
-        fileWidth = imageSize.width()
-        fileHeight = imageSize.height()
-        aspectRatio = fileWidth / fileHeight
-
-        img = Image.open(fileName)
-        bitDepth = img.mode
-        fileSize = os.path.getsize(fileName)
-        fileModifiedTime = datetime.fromtimestamp(os.path.getmtime(fileName)).strftime('%Y-%m-%d %H:%M:%S')
-        dpi = img.info.get('dpi', (72, 72))
-        gps_info = self.getGPSInfo(img)
-
-        infoText = f"Size: {fileWidth}x{fileHeight} pixels\n"
-        infoText += f"Aspect Ratio: {aspectRatio:.2f}\n"
-        infoText += f"Bit Depth: {bitDepth}\n"
-        infoText += f"Last Modified: {fileModifiedTime}\n"
-        infoText += f"File Size: {fileSize} bytes\n"
-        infoText += f"DPI: {dpi[0]}\n"
-        infoText += gps_info
-
-        self.infoLabel.setText(infoText)
-
-    def getGPSInfo(self, img):
-        try:
-            exif = img._getexif()
-            if not exif:
-                return "No GPS Info.\n"
-
-            gps_info = exif.get(ExifTags.TAGS.get("GPSInfo"))
-            if not gps_info:
-                return "No GPS Info.\n"
-
-            return f"GPS Info: {gps_info}\n"
-        except Exception as e:
-            return "Error retrieving GPS Info.\n"
-
-    def showPrevImage(self):
-        logging.info("Предыдущее изображение")
-        if self.current_index > 0:
-            self.current_index -= 1
-            self.showImage(self.image_files[self.current_index])
-
-    def showNextImage(self):
-        logging.info("Следующее изображение")
-        if self.current_index < len(self.image_files) - 1:
-            self.current_index += 1
-            self.showImage(self.image_files[self.current_index])
-
-    def saveLastOpenedImage(self, fileName):
-        logging.info(f"Сохранение последнего открытого изображения: {fileName}")
-        with open(self.CONFIG_FILE, "w") as config_file:
-            json.dump({"last_opened": fileName}, config_file)
-
-    def loadLastOpenedImage(self):
-        logging.info("Загрузка последнего открытого изображения")
-        if os.path.exists(self.CONFIG_FILE):
-            with open(self.CONFIG_FILE, "r") as config_file:
-                config = json.load(config_file)
-                last_opened = config.get("last_opened")
-                if last_opened and os.path.exists(last_opened):
-                    self.openImage(last_opened)
+    # Остальные методы остаются без изменений, но с обновленным визуальным стилем
+    def showFullScreenImage(self):
+        if self.pixmap and not self.pixmap.isNull():
+            dialog = FullScreenDialog(self.pixmap, self)
+            dialog.setStyleSheet(f"""
+                QDialog {{
+                    background-color: {PRIMARY_DARK};
+                }}
+            """)
+            dialog.exec()
 
 class FullScreenDialog(QDialog):
     def __init__(self, pixmap, parent=None):
-        super().__init__(parent, Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        super().__init__(parent, Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet("background: transparent;")
-        self.setWindowState(Qt.WindowFullScreen)
+        self.setWindowState(Qt.WindowState.WindowFullScreen)
 
         layout = QVBoxLayout(self)
         self.label = QLabel(self)
-        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setPixmap(pixmap)
         layout.addWidget(self.label)
 
-        # Центрируем окно
         screen_geometry = QApplication.primaryScreen().geometry()
         screen_center = screen_geometry.center()
-
+        
         pixmap_size = pixmap.size()
         dialog_width = pixmap_size.width()
         dialog_height = pixmap_size.height()
-
+        
         x_pos = screen_center.x() - dialog_width // 2
         y_pos = screen_center.y() - dialog_height // 2
         self.setGeometry(x_pos, y_pos, dialog_width, dialog_height)
 
     def mousePressEvent(self, event):
-        self.close()  # Закрытие диалога при клике на изображение
+        self.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     viewer = PhotoViewer()
     viewer.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

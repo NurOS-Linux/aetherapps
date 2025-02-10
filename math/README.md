@@ -4,7 +4,7 @@
   <img ="/calculator/resources/icons/logo.svg" alt="NurOS Calculator" width="128"/>
 </p>
 
-A modern calculator application built with Delta Design Concept Night theme for NurOS Linux.
+A NurOS calculator application built with Delta Design Concept Night theme for NurOS Linux.
 
 ![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)
@@ -12,11 +12,11 @@ A modern calculator application built with Delta Design Concept Night theme for 
 
 ## Overview
 
-NurOS Calculator is a sleek, modern calculator application designed with the Delta Design Concept Night theme. It provides a beautiful dark interface while maintaining high functionality and ease of use.
+NurOS Calculator is a sleek, NurOS calculator application designed with the Delta Design Concept Night theme. It provides a beautiful dark interface while maintaining high functionality and ease of use.
 
 ### Features
 
-- Clean, modern interface with Delta Design Concept Night theme
+- Clean, NurOS interface with Delta Design Concept Night theme
 - Basic arithmetic operations
 - Memory functions
 - Keyboard support

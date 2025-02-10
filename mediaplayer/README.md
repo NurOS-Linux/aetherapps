@@ -5,7 +5,7 @@
 
 ## Overview
 
-NurOS Media Player is a modern audio player built with DeltaDesign Concept Night - a sleek, dark-themed design language optimized for night-time use. It combines powerful audio playback capabilities with an elegant user interface.
+NurOS Media Player is a NurOS audio player built with DeltaDesign Concept Night - a sleek, dark-themed design language optimized for night-time use. It combines powerful audio playback capabilities with an elegant user interface.
 
 ### Key Features
 

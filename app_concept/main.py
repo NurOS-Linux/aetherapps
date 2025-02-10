@@ -4,10 +4,10 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPalette
 
-class ModernDarkWindow(QMainWindow):
+class NurOSDarkWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Modern Dark App")
+        self.setWindowTitle("NurOS Dark App")
         self.setMinimumSize(800, 600)
         
         # Создаем центральный виджет
@@ -25,7 +25,7 @@ class ModernDarkWindow(QMainWindow):
         card.setLayout(card_layout)
         
         # Добавляем элементы в карточку
-        title = QLabel("Welcome to Modern Dark")
+        title = QLabel("Welcome to NurOS Dark")
         title.setObjectName("title")
         
         input_field = QLineEdit()
@@ -122,7 +122,7 @@ def main():
     palette.setColor(QPalette.ColorRole.Link, QColor(92, 144, 255))
     app.setPalette(palette)
     
-    window = ModernDarkWindow()
+    window = NurOSDarkWindow()
     window.show()
     sys.exit(app.exec())
 
