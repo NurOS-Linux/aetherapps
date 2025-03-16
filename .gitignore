@@ -15,4 +15,4 @@ coverage
 *.log.*
 *.log-*
 *.log/*
-*build*
+*build
