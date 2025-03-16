@@ -1,10 +1,9 @@
 # Delta Apps - Core Applications for DeltaDE
 
-<div align="center">
+
   [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
   [![Python](https://img.shields.io/badge/Python-70.2%25-3776AB?logo=python)](https://www.python.org/)
   [![C++](https://img.shields.io/badge/C++-11%25-00599C?logo=cplusplus)](https://isocpp.org/)
-</div>
 
 ## Overview
 
