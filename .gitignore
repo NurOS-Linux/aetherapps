@@ -1,4 +1,4 @@
-.vscode
+.vscode/
 *.bin
 build-*
 build
@@ -16,3 +16,8 @@ coverage
 *.log-*
 *.log/*
 *build
+
+obj/
+bin/
+
+nuros-appconcept/

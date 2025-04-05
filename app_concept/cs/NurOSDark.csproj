@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AssemblyName>NurOSDark</AssemblyName>
+    <RootNamespace>NurOSDark</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>AnmiTaliDev</Authors>
+    <Company>NurOS</Company>
+    <Product>NurOS Dark App</Product>
+    <Description>Dark themed application for NurOS Linux</Description>
+    <Copyright>Copyright © 2025 NurOS</Copyright>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.0.5" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
+    <PackageReference Include="Avalonia.X11" Version="11.0.5" />
+  </ItemGroup>
+</Project>
