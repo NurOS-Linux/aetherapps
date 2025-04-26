@@ -1,28 +1,27 @@
-# Delta Apps - Core Applications for DeltaDE
+# Aether Apps - Core Applications for DeltaDE
 
 
   [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-  [![Python](https://img.shields.io/badge/Python-70.2%25-3776AB?logo=python)](https://www.python.org/)
   [![C++](https://img.shields.io/badge/C++-11%25-00599C?logo=cplusplus)](https://isocpp.org/)
 
 ## Overview
 
-Delta Apps is a collection of modern desktop applications specifically designed for the DeltaDE (Delta Desktop Environment). These applications are built with performance, usability, and aesthetic consistency in mind, following the NurOS design philosophy.
+Aether Apps is a collection of modern desktop applications specifically designed for the NurOS. These applications are built with performance, usability, and aesthetic consistency in mind, following the NurOS design philosophy.
 
 ## Applications
 
 ### System
-- **Delta Command** - Modern terminal emulator with multi-tab support
+- **Command** - Modern terminal emulator with multi-tab support
 - **Wifi Manager** - Wireless network management utility
 - **Astrum** - System utility
 
 ### Media
-- **Delta Media Player** - Feature-rich media player
+- **Media Player** - Feature-rich media player
 - **Photo Viewer** - Image viewing application
 - **Notepad** - Simple text editor
 
 ### Education
-- **Delta Math** - Mathematical calculations and utilities
+- **Math** - Mathematical calculations and utilities
 
 ### Games
 - **Four Balls in a Row** - Classic connection game
@@ -50,7 +49,6 @@ Delta Apps is a collection of modern desktop applications specifically designed 
   - Qt6 Framework
   - QTermWidget
   - Python Libraries
-  - Custom Delta Components
 
 ## Installation
 
@@ -63,8 +61,8 @@ sudo pacman -S qt6-base qt6-tools qtermwidget cmake ninja pkg-config noto-fonts-
 ### Building from Source
 ```bash
 # Clone the repository
-git clone https://github.com/NurOS-Linux/ddeapps.git
-cd ddeapps
+git clone https://github.com/NurOS-Linux/aetherapps.git
+cd aetherapps
 
 # Build Delta Command
 cd command
@@ -114,30 +112,5 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 ## Contact
 
-- Repository: [https://github.com/NurOS-Linux/ddeapps](https://github.com/NurOS-Linux/ddeapps)
+- Repository: [https://github.com/NurOS-Linux/aetherapps](https://github.com/NurOS-Linux/aetherapps)
 - NurOS Website: [https://nuros.org](https://nuros.org)
-
-
-
-## Описание на русском
-
-Delta Apps - это набор основных приложений для окружения рабочего стола DeltaDE. Проект включает:
-
-### Системные приложения
-- **Delta Command** - Современный терминал с поддержкой вкладок
-- **Wifi Manager** - Утилита управления Wi-Fi
-- **Astrum** - Системная утилита
-
-### Мультимедиа
-- **Delta Media Player** - Медиаплеер
-- **Photo Viewer** - Просмотрщик изображений
-- **Notepad** - Текстовый редактор
-
-### Образование
-- **Delta Math** - Математические утилиты
-
-### Игры
-- **Four Balls in a Row** - Классическая игра "4 в ряд"
-- **Juldyz Game** - Космический шутер
-- **Ping Pong** - Настольный теннис
-- **Tic Tac Toe** - Крестики-нолики (в нескольких реализациях)
