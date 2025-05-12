@@ -16,8 +16,12 @@ coverage
 *.log-*
 *.log/*
 *build
+!meson.build
 
 obj/
 bin/
 
 nuros-appconcept/
+
+apg/
+*.apg
