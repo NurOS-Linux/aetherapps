@@ -918,6 +918,99 @@ void AstrumFileManager::openInTerminal() {
     QMessageBox::warning(this, "Error", "Could not open terminal.");
 }
 
+void AstrumFileManager::showAboutDialog() {
+    QDialog dialog(this);
+    dialog.setWindowTitle("About Astrum");
+    dialog.setMinimumWidth(450);
+    dialog.setMinimumHeight(380);
+    
+    QVBoxLayout* layout = new QVBoxLayout(&dialog);
+    
+    // Заголовок с логотипом
+    QHBoxLayout* headerLayout = new QHBoxLayout();
+    
+    QLabel* iconLabel = new QLabel();
+    iconLabel->setPixmap(QIcon::fromTheme("system-file-manager").pixmap(64, 64));
+    headerLayout->addWidget(iconLabel);
+    
+    QVBoxLayout* titleLayout = new QVBoxLayout();
+    QLabel* titleLabel = new QLabel("<h1>Astrum File Manager</h1>");
+    titleLabel->setStyleSheet(QString("color: %1;").arg(ACCENT_COLOR));
+    titleLayout->addWidget(titleLabel);
+    
+    QLabel* versionLabel = new QLabel("<h3>Version 1.3.3</h3>");
+    versionLabel->setStyleSheet(QString("color: %1;").arg(TEXT_PRIMARY));
+    titleLayout->addWidget(versionLabel);
+    
+    headerLayout->addLayout(titleLayout);
+    headerLayout->addStretch();
+    layout->addLayout(headerLayout);
+    
+    // Линия разделителя
+    QFrame* line = new QFrame();
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    line->setStyleSheet(QString("background-color: %1;").arg(DIVIDER_COLOR));
+    layout->addWidget(line);
+    
+    // Информация о программе
+    QLabel* infoLabel = new QLabel();
+    infoLabel->setWordWrap(true);
+    infoLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    infoLabel->setTextFormat(Qt::RichText);
+    infoLabel->setText(
+        "<p><b>Astrum File Manager</b> is a minimalist dark-themed file manager.</p>"
+        "<p><b>License:</b> GNU GPL v3.0</p>"
+        "<p><b>Developer:</b> AnmiTaliDev</p>"
+        "<p><b>Created for:</b> NurOS AetherApps</p>"
+        "<p>This program is free software: you can redistribute it and/or modify "
+        "it under the terms of the GNU General Public License as published by "
+        "the Free Software Foundation, either version 3 of the License, or "
+        "(at your option) any later version.</p>"
+        "<p>This program is distributed in the hope that it will be useful, "
+        "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the "
+        "GNU General Public License for more details.</p>"
+    );
+    infoLabel->setStyleSheet(QString("color: %1; padding: 10px;").arg(TEXT_PRIMARY));
+    layout->addWidget(infoLabel);
+    
+    // Кнопка закрытия
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    QPushButton* closeButton = new QPushButton("Close");
+    connect(closeButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+    closeButton->setStyleSheet(QString(
+        "QPushButton {"
+        "   background-color: %1;"
+        "   color: %2;"
+        "   border: none;"
+        "   border-radius: 4px;"
+        "   padding: 8px 16px;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: %3;"
+        "}"
+    ).arg(ACCENT_COLOR).arg(BG_DARK).arg(SECONDARY_ACCENT));
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(closeButton);
+    layout->addLayout(buttonLayout);
+    
+    // Стили для диалога
+    dialog.setStyleSheet(QString(
+        "QDialog {"
+        "   background-color: %1;"
+        "   color: %2;"
+        "   border-radius: 8px;"
+        "}"
+        "QLabel {"
+        "   color: %2;"
+        "}"
+    ).arg(SURFACE_DARK).arg(TEXT_PRIMARY));
+    
+    dialog.exec();
+}
+
 void AstrumFileManager::bookmarkClicked(QListWidgetItem* item) {
     QString path = item->data(Qt::UserRole).toString();
     displayDirectoryContents(path);
@@ -1398,6 +1491,14 @@ void AstrumFileManager::createMenu() {
     QAction* refresh_action = new QAction("Refresh", this);
     connect(refresh_action, &QAction::triggered, this, &AstrumFileManager::refreshView);
     view_menu->addAction(refresh_action);
+
+    // Меню "Справка"
+    QMenu* help_menu = menubar->addMenu("Help");
+    help_menu->setObjectName("menu");
+
+    QAction* about_action = new QAction(QIcon::fromTheme("help-about"), "About Astrum", this);
+    connect(about_action, &QAction::triggered, this, &AstrumFileManager::showAboutDialog);
+    help_menu->addAction(about_action);
 }
 
 void AstrumFileManager::updatePath(const QString& path) {

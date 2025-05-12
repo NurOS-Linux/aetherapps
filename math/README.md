@@ -4,7 +4,7 @@
   <img ="/calculator/resources/icons/logo.svg" alt="NurOS Calculator" width="128"/>
 </p>
 
-A NurOS calculator application built with Delta Design Concept Night theme for NurOS Linux.
+A NurOS calculator application built with Aether Design Concept Night theme for NurOS Linux.
 
 ![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green.svg)
@@ -12,11 +12,11 @@ A NurOS calculator application built with Delta Design Concept Night theme for N
 
 ## Overview
 
-NurOS Calculator is a sleek, NurOS calculator application designed with the Delta Design Concept Night theme. It provides a beautiful dark interface while maintaining high functionality and ease of use.
+NurOS Calculator is a sleek, NurOS calculator application designed with the Aether Design Concept Night theme. It provides a beautiful dark interface while maintaining high functionality and ease of use.
 
 ### Features
 
-- Clean, NurOS interface with Delta Design Concept Night theme
+- Clean, NurOS interface with Aether Design Concept Night theme
 - Basic arithmetic operations
 - Memory functions
 - Keyboard support
@@ -29,7 +29,7 @@ NurOS Calculator is a sleek, NurOS calculator application designed with the Delt
 ### Starting the Calculator
 
 ```bash
-python3 deltamath.py
+python3 aethermath.py
 ```
 
 ### Keyboard Shortcuts
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 
 3. Start app:
 ```bash
-python3 deltamath.py
+python3 aethermath.py
 ```
 
 ### Configuration

@@ -114,6 +114,9 @@ private slots:
     void openWith();
     void openContainingFolder();
     void openInTerminal();
+    
+    // О программе
+    void showAboutDialog();
 
 private:
     QAction* create_action(const QIcon& icon, const QString& tip);

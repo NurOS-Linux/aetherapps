@@ -1,15 +1,15 @@
 # NurOS Media Player
-#### DeltaDesign Concept Night Edition
+#### AetherDesign Concept Night Edition
 
 ![NurOS Media Player](docs/images/preview.png)
 
 ## Overview
 
-NurOS Media Player is a NurOS audio player built with DeltaDesign Concept Night - a sleek, dark-themed design language optimized for night-time use. It combines powerful audio playback capabilities with an elegant user interface.
+NurOS Media Player is a NurOS audio player built with AetherDesign Concept Night - a sleek, dark-themed design language optimized for night-time use. It combines powerful audio playback capabilities with an elegant user interface.
 
 ### Key Features
 
-- 🎨 DeltaDesign Concept Night theme
+- 🎨 AetherDesign Concept Night theme
 - 🎵 Support for multiple audio formats (MP3, WAV, OGG, FLAC)  
 - 🔊 10-band equalizer with presets
 - 📋 Playlist management with drag & drop
@@ -146,7 +146,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
-- Design: DeltaDesign Concept Night
+- Design: AetherDesign Concept Night
 - Icons: [Phosphor Icons](https://phosphoricons.com)
 - Font: [Segoe UI](https://docs.microsoft.com/en-us/typography/font-list/segoe-ui)
 
@@ -157,4 +157,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Email: anmitalidev@example.com
 
 ---
-*Built with ❤️ using DeltaDesign Concept Night*
+*Built with ❤️ using AetherDesign Concept Night*

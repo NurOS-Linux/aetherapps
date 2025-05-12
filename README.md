@@ -1,4 +1,4 @@
-# Aether Apps - Core Applications for DeltaDE
+# Aether Apps - Core Applications for AetherDE
 
 
   [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -64,7 +64,7 @@ sudo pacman -S qt6-base qt6-tools qtermwidget cmake ninja pkg-config noto-fonts-
 git clone https://github.com/NurOS-Linux/aetherapps.git
 cd aetherapps
 
-# Build Delta Command
+# Build Aether Command
 cd command
 chmod +x build.sh
 ./build.sh
@@ -72,11 +72,11 @@ chmod +x build.sh
 
 ## Project Structure
 ```
-delta-apps/
-├── command/          # Delta Command Terminal
+aether-apps/
+├── command/          # Aether Command Terminal
 ├── astrum/          # System Utility
-├── math/            # Delta Math Application
-├── mediaplayer/     # Delta Media Player
+├── math/            # Aether Math Application
+├── mediaplayer/     # Aether Media Player
 ├── manger_wifi/     # Wifi Manager
 ├── PhotoViewer/     # Photo Viewer
 ├── Notepad/         # Text Editor
