@@ -36,19 +36,12 @@ Aether Apps is a collection of modern desktop applications specifically designed
 
 ## Technical Stack
 
-- **Languages**:
-  - Python (70.2%)
-  - C++ (11%)
-  - Makefile (9.6%)
-  - C (3.4%)
-  - PHP (1.6%)
-  - JavaScript (1.6%)
-  - Other (2.6%)
-
 - **Core Technologies**:
   - Qt6 Framework
   - QTermWidget
-  - Python Libraries
+  - C++
+  - Meson build
+  - Ninja
 
 ## Installation
 
@@ -63,11 +56,6 @@ sudo pacman -S qt6-base qt6-tools qtermwidget cmake ninja pkg-config noto-fonts-
 # Clone the repository
 git clone https://github.com/NurOS-Linux/aetherapps.git
 cd aetherapps
-
-# Build Aether Command
-cd command
-chmod +x build.sh
-./build.sh
 ```
 
 ## Project Structure
@@ -77,7 +65,7 @@ aether-apps/
 ├── astrum/          # System Utility
 ├── math/            # Aether Math Application
 ├── mediaplayer/     # Aether Media Player
-├── manger_wifi/     # Wifi Manager
+├── calendar         # Calendar
 ├── PhotoViewer/     # Photo Viewer
 ├── Notepad/         # Text Editor
 ├── games/           # Game Collection
